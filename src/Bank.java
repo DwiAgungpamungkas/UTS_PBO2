@@ -1,31 +1,28 @@
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Transaksi {
+public class Bank {
+    private String name;
+    private List<Akun> accounts;
 
-    private String keterangan;
-    private double nominal;
-    private Date tanggal;
-
-    public Transaksi(String keterangan, double nominal) {
-        this.keterangan = keterangan;
-        this.nominal = nominal;
-        this.tanggal = new Date();
+    public Bank(String name) {
+        this.name = name;
+        this.accounts = new ArrayList<>();
     }
 
-    public String getKeterangan() {
-        return keterangan;
+    public String getName() {
+        return name;
     }
 
-    public double getNominal() {
-        return nominal;
+    public List<Akun> getAccounts() {
+        return accounts;
     }
 
-    public Date getTanggal() {
-        return tanggal;
+    public void addAccount(Akun account) {
+        accounts.add(account);
     }
 
-    @Override
-    public String toString() {
-        return keterangan + ": Rp" + nominal + " (" + tanggal.toString() + ")";
+    public void removeAccount(Akun account) {
+        accounts.remove(account);
     }
 }

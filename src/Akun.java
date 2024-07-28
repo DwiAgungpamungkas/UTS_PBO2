@@ -2,13 +2,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Account {
+public class Akun {
     private String owner;
     private double balance;
     private Bank bank;
     private List<Transaksi> transaksi;
 
-    public Account(String owner, double initialBalance, Bank bank) {
+    public Akun(String owner, double initialBalance, Bank bank) {
         this.owner = owner;
         this.balance = initialBalance;
         this.bank = bank;
@@ -29,7 +29,7 @@ public class Account {
         transaksi.add(new Transaksi(new Date(), amount, "Deposit"));
     }
 
-    public void transfer(Account toAccount, double amount) {
+    public void transfer(Akun toAccount, double amount) {
         double fee = 0.0;
         if (!this.bank.getName().equals(toAccount.getBank().getName())) {
             fee = 5.0; // Biaya transfer antar bank

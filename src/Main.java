@@ -1,72 +1,100 @@
-import java.awt.*;
-import java.util.ArrayList;
+import java.util.Scanner;
 
-public class RekeningBank {
+public class Main {
+    public static void main(String[] args) {
+        Bank bankA = new Bank("Bank Mandiri");
+        Bank bankB = new Bank("Bank BCA");
 
-    private String nama;
-    private String noRekening;
-    private double saldo;
-    private List<Transaksi> transaksiList = new ArrayList<>();
+        // Membuat beberapa akun bank
+        Akun acc1 = new Akun("Budi", 100.000, bankA);
+        Akun acc2 = new Akun("Asep", 200.000, bankA);
+        Akun acc3 = new Akun("Galuh", 300.000, bankB);
 
-    public RekeningBank(String nama, String noRekening, double saldo) {
-        this.nama = nama;
-        this.noRekening = noRekening;
-        this.saldo = saldo;
+        Scanner scanner = new Scanner(System.in);
+        int choice;
+        do {
+            System.out.println("Menu:");
+            System.out.println("1. Cek Saldo");
+            System.out.println("2. Input Saldo");
+            System.out.println("3. Transfer");
+            System.out.println("4. Rekap Transaksi Perbulan");
+            System.out.println("5. Keluar");
+            System.out.print("Pilih opsi: ");
+            choice = scanner.nextInt();
+            switch (choice) {
+                case 1:
+                    System.out.println("Masukkan nama akun: ");
+                    String name = scanner.next();
+                    Akun acc = findAccountByName(name, bankA, bankB);
+                    if (acc != null) {
+                        System.out.println("Saldo: " + acc.checkBalance());
+                    } else {
+                        System.out.println("Akun tidak ditemukan.");
+                    }
+                    break;
+                case 2:
+                    System.out.println("Masukkan nama akun: ");
+                    name = scanner.next();
+                    acc = findAccountByName(name, bankA, bankB);
+                    if (acc != null) {
+                        System.out.println("Masukkan jumlah yang akan disetor: ");
+                        double amount = scanner.nextDouble();
+                        acc.deposit(amount);
+                        System.out.println("Saldo baru: " + acc.checkBalance());
+                    } else {
+                        System.out.println("Akun tidak ditemukan.");
+                    }
+                    break;
+                case 3:
+                    System.out.println("Masukkan nama akun pengirim: ");
+                    String fromName = scanner.next();
+                    Akun fromAcc = findAccountByName(fromName, bankA, bankB);
+                    if (fromAcc != null) {
+                        System.out.println("Masukkan nama akun penerima: ");
+                        String toName = scanner.next();
+                        Akun toAcc = findAccountByName(toName, bankA, bankB);
+                        if (toAcc != null) {
+                            System.out.println("Masukkan jumlah yang akan ditransfer: ");
+                            double amount = scanner.nextDouble();
+                            fromAcc.transfer(toAcc, amount);
+                            System.out.println("Saldo pengirim baru: " + fromAcc.checkBalance());
+                            System.out.println("Saldo penerima baru: " + toAcc.checkBalance());
+                        } else {
+                            System.out.println("Akun penerima tidak ditemukan.");
+                        }
+                    } else {
+                        System.out.println("Akun pengirim tidak ditemukan.");
+                    }
+                    break;
+                case 4:
+                    System.out.println("Masukkan nama akun: ");
+                    name = scanner.next();
+                    acc = findAccountByName(name, bankA, bankB);
+                    if (acc != null) {
+                        acc.printMonthlyTransactions();
+                    } else {
+                        System.out.println("Akun tidak ditemukan.");
+                    }
+                    break;
+                case 5:
+                    System.out.println("Keluar dari aplikasi.");
+                    break;
+                default:
+                    System.out.println("Opsi tidak valid.");
+            }
+        } while (choice != 5);
+
+        scanner.close();
     }
 
-    public String getNama() {
-        return nama;
-    }
-
-    public void setNama(String nama) {
-        this.nama = nama;
-    }
-
-    public String getNoRekening() {
-        return noRekening;
-    }
-
-    public double getSaldo() {
-        return saldo;
-    }
-
-    public void setSaldo(double saldo) {
-        this.saldo = saldo;
-    }
-
-    public List<Transaksi> getTransaksiList() {
-        return transaksiList;
-    }
-
-    public void cekSaldo() {
-        System.out.println("Saldo Rekening " + noRekening + ": Rp" + saldo);
-    }
-
-    public void inputSaldo(double nominal) {
-        saldo += nominal;
-        System.out.println("Saldo Rekening " + noRekening + " berhasil ditambahkan Rp" + nominal);
-    }
-
-    public void rekapTransaksiPerbulan(int bulan) {
-        System.out.println("Rekap Transaksi Rekening " + noRekening + " Bulan " + bulan);
-        for (Transaksi transaksi : transaksiList) {
-            if (transaksi.getTanggal().getMonth() == bulan - 1) {
-                System.out.println(" - " + transaksi);
+    private static Akun findAccountByName(String name, Bank... banks) {
+        for (Bank bank : banks) {
+            for (Akun acc : bank.getAccounts()) {
+                if (acc.getOwner().equals(name)) {
+                    return acc;
+                }
             }
         }
-    }
-
-    public void transfer(RekeningBank rekeningTujuan, double nominalTransfer, double biayaTransfer) {
-        if (saldo >= nominalTransfer + biayaTransfer) {
-            saldo -= nominalTransfer + biayaTransfer;
-            rekeningTujuan.saldo += nominalTransfer;
-            Transaksi transaksiPengirim = new Transaksi("Transfer ke " + rekeningTujuan.getNama(), -nominalTransfer - biayaTransfer);
-            Transaksi transaksiPenerima = new Transaksi("Transfer dari " + nama, nominalTransfer);
-            transaksiList.add(transaksiPengirim);
-            rekeningTujuan.transaksiList.add(transaksiPenerima);
-            System.out.println("Transfer ke Rekening " + rekeningTujuan.getNoRekening() + " berhasil dilakukan dengan nominal Rp" + nominalTransfer);
-        } else {
-            System.out.println("Saldo tidak mencukupi untuk melakukan transfer");
-        }
+        return null;
     }
 }

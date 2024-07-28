@@ -1,20 +1,20 @@
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Transaction {
-    private Date date;
-    private double amount;
-    private String description;
+public class Transaksi {
+    private Date tanggal;
+    private double jumlah;
+    private String deskripsi;
 
-    public Transaction(Date date, double amount, String description) {
-        this.date = date;
-        this.amount = amount;
-        this.description = description;
+    public Transaksi(Date tanggal, double jumlah, String deskripsi) {
+        this.tanggal = tanggal;
+        this.jumlah = jumlah;
+        this.deskripsi = deskripsi;
     }
 
     @Override
     public String toString() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        return sdf.format(date) + " - " + description + ": " + amount;
+        return sdf.format(tanggal) + " - " + deskripsi + ": " + jumlah;
     }
 }
